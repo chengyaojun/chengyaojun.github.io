@@ -1,0 +1,504 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="chengyaojun">
+  <meta name="keywords" content="">
+  <title>Egg框架开发：Symbol.for(&#39;egg#eggPath&#39;) is required on Application 错误 - 五蕴皆空的分享</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.1.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"copy_btn":true,"image_zoom":{"enable":true},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>五蕴皆空</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/bg/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="Egg框架开发：Symbol.for('egg#eggPath') is required on Application 错误">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2020-12-23 16:00" pubdate>
+        2020年12月23日 下午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      979 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      17
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Egg框架开发：Symbol.for(&#39;egg#eggPath&#39;) is required on Application 错误</h1>
+            
+            <div class="markdown-body">
+              <h4 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h4><p>使用Egg封装自己的的框架，在项目中<code>npm link egg-framework-xxx</code>测试，启动后报错：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs javascript">cache-<span class="hljs-built_in">require</span>-paths: Failed saving cache: <span class="hljs-built_in">Error</span>: ENOENT: no such file or directory, open <span class="hljs-string">&#x27;C:\Users\yaojun_cheng\Desktop\egg-dubbo-demo\app\node_modules\egg-bin\node_modules\egg-ts-helper\.tmp\requirePaths.json&#x27;</span><br>assert.js:<span class="hljs-number">350</span><br>    <span class="hljs-keyword">throw</span> err;<br>    ^<br><br>AssertionError [ERR_ASSERTION]: <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>) is required on Application<br>    at EggLoader.getEggPaths (C:\Users\yaojun_cheng\Desktop\egg-dubbo-demo\app\node_modules\egg-core\lib\loader\egg_loader.js:<span class="hljs-number">266</span>:<span class="hljs-number">7</span>)<br>    at <span class="hljs-keyword">new</span> EggLoader (C:\Users\yaojun_cheng\Desktop\egg-dubbo-demo\app\node_modules\egg-core\lib\loader\egg_loader.js:<span class="hljs-number">72</span>:<span class="hljs-number">26</span>)<br>    at getLoader (C:\Users\yaojun_cheng\Desktop\egg-dubbo-demo\app\node_modules\egg-bin\node_modules\egg-ts-helper\dist\scripts\eggInfo.js:<span class="hljs-number">71</span>:<span class="hljs-number">12</span>)<br>    at <span class="hljs-built_in">Object</span>.&lt;anonymous&gt; (C:\Users\yaojun_cheng\Desktop\egg-dubbo-demo\app\node_modules\egg-bin\node_modules\egg-ts-helper\dist\scripts\eggInfo.js:<span class="hljs-number">20</span>:<span class="hljs-number">16</span>)<br>    at Module._compile (internal/modules/cjs/loader.js:<span class="hljs-number">689</span>:<span class="hljs-number">30</span>)<br>    at <span class="hljs-built_in">Object</span>.Module._extensions..js (internal/modules/cjs/loader.js:<span class="hljs-number">700</span>:<span class="hljs-number">10</span>)<br>    at Module.load (internal/modules/cjs/loader.js:<span class="hljs-number">599</span>:<span class="hljs-number">32</span>)<br>    at tryModuleLoad (internal/modules/cjs/loader.js:<span class="hljs-number">538</span>:<span class="hljs-number">12</span>)<br>    at <span class="hljs-built_in">Function</span>.Module._load (internal/modules/cjs/loader.js:<span class="hljs-number">530</span>:<span class="hljs-number">3</span>)<br>    at <span class="hljs-built_in">Function</span>.Module.runMain (internal/modules/cjs/loader.js:<span class="hljs-number">742</span>:<span class="hljs-number">12</span>)<br><br></code></pre></td></tr></table></figure>
+
+<h4 id="环境信息"><a href="#环境信息" class="headerlink" title="环境信息"></a>环境信息</h4><ul>
+<li>操作系统： Win10</li>
+<li>nodejs: v10.15.1</li>
+<li>egg：2.15.1</li>
+</ul>
+<h4 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h4><p>定位错误提示发生在<code>egg-core\lib\loader\egg_loader.js</code>的<code>getEggPaths</code>函数，具体如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// egg-core\lib\loader\egg_loader.js</span><br><span class="hljs-comment">/**</span><br><span class="hljs-comment">   * Get &#123;<span class="hljs-doctag">@link </span>EggLoader#eggPaths&#125;</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@return <span class="hljs-type">&#123;Array&#125;</span> </span>framework directories</span><br><span class="hljs-comment">   * <span class="hljs-doctag">@see <span class="hljs-type">&#123;@link EggLoader#eggPaths&#125;</span></span></span><br><span class="hljs-comment">   * <span class="hljs-doctag">@private</span></span><br><span class="hljs-comment">   * <span class="hljs-doctag">@since </span>1.0.0</span><br><span class="hljs-comment">   */</span><br>  <span class="hljs-function"><span class="hljs-title">getEggPaths</span>(<span class="hljs-params"></span>)</span> &#123;<br>    <span class="hljs-comment">// avoid require recursively</span><br>    <span class="hljs-keyword">const</span> EggCore = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;../egg&#x27;</span>);<br>    <span class="hljs-keyword">const</span> eggPaths = [];<br><br>    <span class="hljs-keyword">let</span> proto = <span class="hljs-built_in">this</span>.app;<br><br>    <span class="hljs-comment">// Loop for the prototype chain</span><br>    <span class="hljs-keyword">while</span> (proto) &#123;<br>      proto = <span class="hljs-built_in">Object</span>.getPrototypeOf(proto);<br>      <span class="hljs-comment">// stop the loop if</span><br>      <span class="hljs-comment">// - object extends Object</span><br>      <span class="hljs-comment">// - object extends EggCore</span><br>      <span class="hljs-keyword">if</span> (proto === <span class="hljs-built_in">Object</span>.prototype || proto === EggCore.prototype) &#123;<br>        <span class="hljs-keyword">break</span>;<br>      &#125;<br>	<br>      <span class="hljs-comment">// 报错位置</span><br>      assert(proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>)), <span class="hljs-string">&#x27;Symbol.for(\&#x27;egg#eggPath\&#x27;) is required on Application&#x27;</span>);<br>      <span class="hljs-keyword">const</span> eggPath = proto[<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>)];<br>      assert(eggPath &amp;&amp; <span class="hljs-keyword">typeof</span> eggPath === <span class="hljs-string">&#x27;string&#x27;</span>, <span class="hljs-string">&#x27;Symbol.for(\&#x27;egg#eggPath\&#x27;) should be string&#x27;</span>);<br>      assert(fs.existsSync(eggPath), <span class="hljs-string">`<span class="hljs-subst">$&#123;eggPath&#125;</span> not exists`</span>);<br>      <span class="hljs-keyword">const</span> realpath = fs.realpathSync(eggPath);<br>      <span class="hljs-keyword">if</span> (!eggPaths.includes(realpath)) &#123;<br>        eggPaths.unshift(realpath);<br>      &#125;<br>    &#125;<br><br>    <span class="hljs-keyword">return</span> eggPaths;<br>  &#125;<br><br></code></pre></td></tr></table></figure>
+
+<p>在一个simple类型的egg项目中（无框架），proto依次获取到的是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-number">1.</span> EggApplication &#123; <span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">Application</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggApplication</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">2.</span> EggCore&#123;<span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">EggApplication</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggCore</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">3.</span> [egg-ts-helper] create typings ...<br><span class="hljs-number">4.</span> EggApplication &#123; <span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">Agent</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggApplication</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">5.</span> EggCore&#123;<span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">EggApplication</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggCore</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">6.</span> EggApplication(<span class="hljs-class"><span class="hljs-keyword">class</span> <span class="hljs-title">Application</span> <span class="hljs-keyword">extends</span> <span class="hljs-title">EggApplication</span> </span>&#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">7.</span> EggCore&#123;<span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">EggApplication</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggCore</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+
+<p>在一个基于框架的项目中，proto依次获取到的是：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-number">1.</span> Application &#123; <span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">MandaoApplication</span> <span class="hljs-title">extends</span> <span class="hljs-title">egg</span>.<span class="hljs-title">Application</span> &#123; ... &#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">2.</span> EggApplication &#123;<span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">Application</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggApplication</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">3.</span> EggCore &#123; <span class="hljs-title">constructor</span> = <span class="hljs-title">class</span> <span class="hljs-title">EggApplication</span> <span class="hljs-title">extends</span> <span class="hljs-title">EggCore</span> &#123;...&#125; &#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt;<span class="hljs-literal">true</span><br><span class="hljs-number">4.</span> Application &#123;<span class="hljs-attr">head</span>:, options:, get:, put:, patch:,...&#125;, proto.hasOwnProperty(<span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>))-&gt; <span class="hljs-literal">false</span><br>Uncaught AssertionError: <span class="hljs-built_in">Symbol</span>.for(<span class="hljs-string">&#x27;egg#eggPath&#x27;</span>) is required on Application<br><span class="hljs-number">5.</span> [egg-ts-helper] create typings ...<br></code></pre></td></tr></table></figure>
+
+<p>根据以上的错误信息，定位到egg-ts-helper下的getLoader，</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// \app\node_modules\egg-bin\node_modules\egg-ts-helper\dist\scripts\eggInfo.js</span><br><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">getLoader</span>(<span class="hljs-params">baseDir, framework</span>) </span>&#123; <br>    <span class="hljs-keyword">const</span> frameworkPath = path_1.default.join(baseDir, <span class="hljs-string">&#x27;node_modules&#x27;</span>, framework); <br>    <br>    <span class="hljs-comment">// ...</span><br>    <br>    <span class="hljs-comment">/**</span><br><span class="hljs-comment">     * simple项目时，</span><br><span class="hljs-comment">     * framework: egg</span><br><span class="hljs-comment">     * frameworkPath: C:\Users\yaojun_cheng\Desktop\egg-example\node_modules\egg</span><br><span class="hljs-comment">     *</span><br><span class="hljs-comment">     * 基于框架的项目时，</span><br><span class="hljs-comment">     * framework: framework-mandao</span><br><span class="hljs-comment">     * frameworkPath: C:\Users\yaojun_cheng\Desktop\egg-dubbo-demo\app\node_modules\framework-mandao</span><br><span class="hljs-comment">     */</span><br>    <span class="hljs-keyword">const</span> egg = utils.requireFile(frameworkPath) || utils.requireFile(framework);<br>    <br>    <span class="hljs-comment">// ...</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>​在simple项目时，framework是egg，frameworkPath则是该项目中node_modules\egg。当时基于框架的项目时，framework是link的框架（framework-mandao）， frameworkPath则是link的框架的路径。</p>
+<p>造成该问题的原因是，在link框架之后会有两个egg-core 。一个是框架的node_modules\egg-core，一个是项目的node_modules\egg-core</p>
+<h4 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h4><p>因为framework、app中同时有egg-core。所以需要让两个模块使用一个egg-core即可。解决方式就是在项目中link框架node_modules\中的egg-core。使用shell脚本执行install、link操作</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta">#</span><span class="bash"> C:\Users\yaojun_cheng\Desktop\egg-framework-demo</span><br>rm -rf app/node_modules/<br>rm -rf egg-framework-mandao/node_modules/<br>cd egg-framework-mandao<br>npm install<br>npm uninstall egg<br>npm install egg@2.15.1<br>cd ../app<br>npm install<br>npm link ../egg-framework-mandao/<br>npm link ../egg-framework-mandao/node_modules/egg-core<br></code></pre></td></tr></table></figure>
+
+<h4 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h4><p><a target="_blank" rel="noopener" href="https://github.com/eggjs/egg/issues/3591">https://github.com/eggjs/egg/issues/3591</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                  <div class="post-meta mr-3">
+                    <i class="iconfont icon-category"></i>
+                    
+                      <a class="hover-with-bg" href="/categories/%E7%BB%8F%E9%AA%8C%E6%80%BB%E7%BB%93/">经验总结</a>
+                    
+                  </div>
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/Egg/">Egg</a>
+                    
+                      <a class="hover-with-bg" href="/tags/EggJs/">EggJs</a>
+                    
+                      <a class="hover-with-bg" href="/tags/nodejs/">nodejs</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Egg-framework/">Egg-framework</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2020/12/15/egg-custom-logger-2/">
+                        <span class="hidden-mobile">自定义Egg Logger(二)：自定义加密功能的logger</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'chengyaojun/blog-utterances');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":200})
+    NProgress.start()
+    document.addEventListener('DOMContentLoaded', function() {
+      window.NProgress && window.NProgress.inc();
+    })
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.12.0/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>
