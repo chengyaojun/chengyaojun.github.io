@@ -1,0 +1,628 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="chengyaojun">
+  <meta name="keywords" content="">
+  <title>使用Web3.j开发你的第一个Dapp - 瞌睡虫的巢穴</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.1.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"copy_btn":true,"image_zoom":{"enable":true},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>瞌睡虫</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/bg/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="使用Web3.j开发你的第一个Dapp">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-01-17 12:08" pubdate>
+        2023年1月17日 中午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      37
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">使用Web3.j开发你的第一个Dapp</h1>
+            
+            <div class="markdown-body">
+              <h1 id="使用-Web3-j-开发你的第一个-Dapp"><a href="#使用-Web3-j-开发你的第一个-Dapp" class="headerlink" title="使用 Web3.j 开发你的第一个 Dapp"></a>使用 Web3.j 开发你的第一个 Dapp</h1><p>Web3js 简介</p>
+<hr>
+<blockquote>
+<ul>
+<li>原文地址：<a target="_blank" rel="noopener" href="https://medium.com/nerd-for-tech/develop-your-first-dapp-with-web3-js-d19354925df0">Develop your first Dapp with Web3.js</a></li>
+<li>原文作者：<a target="_blank" rel="noopener" href="https://medium.com/@codemaker2015?source=post_page-----d19354925df0-----------------------------------">Vishnu Sivan</a></li>
+<li>译者：瞌睡虫</li>
+</ul>
+</blockquote>
+<p>大量的加密货币的出现给数字支付带来新的希望，区跨链使这一切成为可能。很难想象去中心化货币的意义。Dapp 代表了互联网的全新愿景，完全不同于当前互联网的迭代。加密货币（或可编程代币）和智能合约等数字资产是去中心化应用（DApps）的核心组成部分，因为他们部署在区块链上。Web3.js 是一个库的集合，允许你与本地或者远程的以太坊节点交互。使用 HTTP 或 IPC 连接是开发 dapps 的骨干。</p>
+<p>在本文中，我们将尝试使用 Web3js 构建一个去中心化 APP。</p>
+<h2 id="开始"><a href="#开始" class="headerlink" title="开始"></a><strong>开始</strong></h2><p>今天，我们试图了解 Dapps 和 Web3js 基础知识。</p>
+<h2 id="目录"><a href="#目录" class="headerlink" title="目录"></a><strong>目录</strong></h2><ul>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">基本术语</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">去中心化应用(Dapps)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">Web3.js</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">它是如何工作的</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">Web3.js 软件包</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">第一个 Dapp</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">设置环境</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">编写合约</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">设置迁移(migration)</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">编译和部署</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.notion.so/Web3-j-Dapp-b6bde826e74244d3a48228f7c1e5c1ac">连接前端与智能合约</a></li>
+</ul>
+<p>让我们从基本术语开始 — 区块链、去中心化应用、以太坊、智能合约以及 web3js。</p>
+<h2 id="区块链"><a href="#区块链" class="headerlink" title="区块链"></a>区块链</h2><p>区块链是一个可审计的数据库。只能在数据库中添加数据，但不能删除或更改数据。数据能被定期的添加到被称为<em>块（blocks）</em>的数据库中。顾名思义，一些列这些块连接在一起被称为<em>区块链(Blockchain).</em></p>
+<h2 id="以太坊"><a href="#以太坊" class="headerlink" title="以太坊"></a><strong>以太坊</strong></h2><p>以太坊是一个基于区块链域名的去中心化开平台，用于运行智能合约，即完全按照编程方式执行程序的应用程序，没有任何欺诈、第三方干预、审查或停机的可能。</p>
+<h2 id="智能合约"><a href="#智能合约" class="headerlink" title="智能合约"></a>智能合约</h2><p>智能合约是指存储在区块链上的高级程序代码，编译成以太坊虚拟机，然后发布到以太坊区块链上执行。它让你能够在没有第三方干预的情况下进行值得信赖的交易；这些交易是可追踪的且不可逆的。通常用于创建和编写智能合约的编程语言是 Serpent, Solidity, Mutan, and LLL.</p>
+<h2 id="去中心化应用（Dapps）"><a href="#去中心化应用（Dapps）" class="headerlink" title="去中心化应用（Dapps）"></a>去中心化应用（Dapps）</h2><p>去中心化应用（Dapp）是一种数字应用程序或程序，它驻留区块链或点对点计算机网络上执行，而不是单台计算机并且独立于任何人的权威控制。</p>
+<p>Dapp 是去中心化应用的缩写，这意味着它不受单个组织控，在不受中央控制的公共、开源、去中心化环境中的区块链网络上运行。</p>
+<p><img src="https://miro.medium.com/max/1352/1*dd8jhjxugD-xLPbi5lGE_g.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1352/1*dd8jhjxugD-xLPbi5lGE_g.png"></p>
+<p>去中心化应用有三个主要组成部分：</p>
+<ul>
+<li><strong>前端</strong>：从用户那里获取输入，并构建要发送到智能合约的请求。</li>
+<li><strong>钱包</strong>：签署交易并发送到网络</li>
+<li><strong>智能合约</strong>：这里是你编写 dapp 业务逻辑的地方</li>
+</ul>
+<p>Dapp 有以下这些特性</p>
+<ul>
+<li><strong>无停机时间 —</strong> 不会有停机时间或限制，因为它不像托管服务器那样依赖于单点故障，而是运行在点对点计算机网络</li>
+<li><strong>透明 —</strong> 来自去中心化应用的数据存储在公共账本上，该账本以安全并透明的方式跟踪所有内容，确保没有人可以篡改它</li>
+<li><strong>开源 —</strong> 开源 dApps 的代码可供查看。应为可以提供更多的输入，整个生态系统更具适应性、进步更快、发展更安全</li>
+</ul>
+<h2 id="Web3-js"><a href="#Web3-js" class="headerlink" title="Web3.js"></a>Web3.js</h2><p>Web3.js 是一个库的集合，允许你使用 HTTP、IPC 或 Websocket 与本地或远程以太坊节点进行交互。Web3.js 为我们提供了与 geth 通信的 Javascript API。它在内部使用 JSON-RPC 与 geth 通信。Web3.js 还可以与支持 JSON-RPC 的任何其他类型节点通信。它所有的 JSON-RPC API 公开为 JavaScript API。</p>
+<h2 id="它是如何运作的"><a href="#它是如何运作的" class="headerlink" title="它是如何运作的"></a>它是如何运作的</h2><p><img src="https://miro.medium.com/max/1400/1*GiFsmkvKdaltzBkr6g0X4w.png" srcset="/img/loading.gif" alt="图片来源 iotbl"></p>
+<p>图片来源 iotbl</p>
+<p>Web3.js 使用 JSON-RPC 与以太坊区块链进行对话，JSON-RPC 代表“远程过程调用”协议。以太坊是一个点对点的节点网络，将所有数据、代码的副本存储在区块链上。Web3.js 允许我们使用 JSON-RPC 向单个以太坊节点发送请求，以便向网络读写数据。这点就像使用带有 JSON API 的 jQuery 来读写数据到 Web 服务器。</p>
+<p>为了将 JavaScript 代码转换为 json-rpc 请求，web3.js 使用我们称为 provider 并实现了负责进行以太坊 RPC 方法调用的方法。Web3.js 上述提到的规范的实现，并使其在<code>web3.providers、HttpProvider、WebsocketProvider</code> 和<code>IpcProvider</code>下可以用</p>
+<h2 id="Web3-js-软件包"><a href="#Web3-js-软件包" class="headerlink" title="Web3.js 软件包"></a>Web3.js 软件包</h2><p>web3.js 附带五个主要的软件包：</p>
+<ul>
+<li><code>web3.eth</code>: 允许与以太坊区块链和以太坊智能合约进行交互。</li>
+<li><code>web3.bzz</code>: 允许与去中心化文件存储 Swarm 进行交互。</li>
+<li><code>web3.shh</code>: 允许与 Whisper 协议交互以进行广播。</li>
+<li><code>web3.utils</code>: 为以太坊 dapps 提供实用工具函数，例如将字符串转化为十六进制标识，将以太币（Ether）值转化为 Wei。</li>
+<li><code>web3.*.net</code>: 允许与以太坊节点的网络属性（如网络 ID 或节点数）进行交互。</li>
+</ul>
+<h2 id="第一个-APP"><a href="#第一个-APP" class="headerlink" title="第一个 APP"></a>第一个 APP</h2><p>我们已经了解了基本的概念。现在，让我们深入了解第一个 dAPP</p>
+<h3 id="1-设置环境"><a href="#1-设置环境" class="headerlink" title="1. 设置环境"></a>1. 设置环境</h3><p>基本上，dAPP 要求你的机器安装 nodejs、truffle 和 ganache。</p>
+<p><strong>Node.js</strong> — 允许你使用 JavaScript 顺利的构建你的 Web 界面，并与区跨链交互</p>
+<p><strong>Truffle</strong> — 以太坊最受欢迎的开发框架</p>
+<p><strong>Ganache</strong> — Truffle 套件的一部分，它为你提供了一个本地网络，在设计精美的控制台上展示账户和交易</p>
+<p><strong>Solc</strong> — <a target="_blank" rel="noopener" href="https://github.com/ethereum/solidity">Solidity</a> 编译器的 JavaScript 绑定。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://nodejs.org/dist/v16.13.1/node-v16.13.1-x64.msi">下载</a> 和 安装 <a target="_blank" rel="noopener" href="https://nodejs.org/en/download/">node.js</a></li>
+<li>全局安装<a target="_blank" rel="noopener" href="https://www.trufflesuite.com/truffle">Truffle</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install -g truffle<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://miro.medium.com/max/1400/0*OfjJ7kKWgVxDRJSb.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/0*OfjJ7kKWgVxDRJSb.png"></p>
+<p><img src="https://miro.medium.com/max/1400/0*XnoJ3d8gZEMDJ9Vv.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/0*XnoJ3d8gZEMDJ9Vv.png"></p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://objects.githubusercontent.com/github-production-release-asset-2e65be/79269625/f157fd00-185e-11eb-9efb-d7c749098bd0?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIAIWNJYAX4CSVEH53A/20220106/us-east-1/s3/aws4_request&X-Amz-Date=20220106T122145Z&X-Amz-Expires=300&X-Amz-Signature=5e3aebb5f97b2bf4b8e84d9cdb8015aa036b2b58763902c2141e953e423d2125&X-Amz-SignedHeaders=host&actor_id=16046782&key_id=0&repo_id=79269625&response-content-disposition=attachment;%20filename=Ganache-2.5.4-win-x64.appx&response-content-type=application/octet-stream">下载</a>和安装<a target="_blank" rel="noopener" href="https://trufflesuite.com/ganache/">ganache-cli</a></li>
+</ul>
+<p><img src="https://miro.medium.com/max/1294/0*AMsh9QBovNQhN4H6.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1294/0*AMsh9QBovNQhN4H6.png"></p>
+<ul>
+<li>全局安装<a target="_blank" rel="noopener" href="https://www.npmjs.com/package/solc">solc</a></li>
+</ul>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm install -g solc<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://miro.medium.com/max/1400/1*Jzj9NpTkAZURiyCXhACjkA.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*Jzj9NpTkAZURiyCXhACjkA.png"></p>
+<p>软件已经安装完成。现在，我们可以设置项目了。</p>
+<p>让我们通过创建一个名为 dapp-demo 的项目文件夹，切换的文件夹下并使用 truffle 进行初始化。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkdir dapp-demo<br><span class="hljs-built_in">cd</span> dapp-demo<br>truffle init<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://miro.medium.com/max/1400/1*eldAUUdN8LX5YMMczdMJaQ.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*eldAUUdN8LX5YMMczdMJaQ.png"></p>
+<p>这里我们将创建你需要的所有项目文件，你应该看到如下内容：</p>
+<p><img src="https://miro.medium.com/max/1400/1*6VY_pUmMTfgdFjV0a9SHVw.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*6VY_pUmMTfgdFjV0a9SHVw.png"></p>
+<h3 id="2-编写合约"><a href="#2-编写合约" class="headerlink" title="2. 编写合约"></a>2. 编写合约</h3><p>现在，是时候在你的项目中创建<code>greeting</code>合约。为此，需要创建一个文件名为 Greting.sol 并将该文件放置<code>contracts</code>文件夹下 ，并在其中添加如下代码。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs solidity">&#x2F;&#x2F; SPDX-License-Identifier: MIT<br>pragma solidity &gt;&#x3D;0.4.22 &lt;0.9.0;<br>contract Greeting &#123;<br><br>  string public greeting &#x3D; &quot;hello&quot;;<br>  function sayHello() external view returns (string memory) &#123;<br>      return greeting;<br>  &#125;<br>  function updateGreeting(string calldata _greeting) external &#123;<br>      greeting &#x3D; _greeting;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="3-设置迁移"><a href="#3-设置迁移" class="headerlink" title="3. 设置迁移"></a>3. 设置迁移</h3><p>在<code>migrations</code>文件夹中使用大于 1 的前缀创建一个新文件，例如，<code>2_greeting_migartion.js</code>部署<code>HelloWorld.sol</code>合约。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs jsx"><span class="hljs-keyword">const</span> Greeting = artifacts.require(<span class="hljs-string">&#x27;Greeting&#x27;</span>);<br><span class="hljs-built_in">module</span>.exports = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">deployer</span>) </span>&#123;<br>	deployer.deploy(Greeting);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h3 id="4-编译和部署"><a href="#4-编译和部署" class="headerlink" title="4. 编译和部署"></a>4. 编译和部署</h3><p>使用下面命令编译你的项目</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">truffle compile<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://miro.medium.com/max/1400/1*_GA8q2TzJKMOsqC6h11cEg.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*_GA8q2TzJKMOsqC6h11cEg.png"></p>
+<p>编译成功之后在你的项目文件夹中将创建一个<code>build</code>文件夹。</p>
+<p>现在，我们需要与 Truffle、Ganache 一起部署和测试你的合约。为此，打开 Ganache，选择”QuickStart” 并保持打开状态。</p>
+<p>接下来，需要让 Truffle 知道部署在哪个网络上。转到<code>truffle-config.js</code>并通过取消<code>deveopment</code>部分的注释来修改网络详情。但请确保来自 Ganache 的 RPC 服务器端口与配置中的端口号一致。</p>
+<p><img src="https://miro.medium.com/max/1400/0*XNzCraTTgvQqHv1j.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/0*XNzCraTTgvQqHv1j.png"></p>
+<p><img src="https://miro.medium.com/max/1400/1*XE_1emxqWw_dwV5ATjfSHA.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*XE_1emxqWw_dwV5ATjfSHA.png"></p>
+<p>使用下面命令部署合约</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">truffle deploy --network development<br></code></pre></td></tr></table></figure>
+
+<p>确认部署事务后，终端将反馈给你一些关于合约的详细信息，例如合约地址、区块信息。</p>
+<p><img src="https://miro.medium.com/max/1400/1*BUOfwfdQ_AGRTTXoA1XVog.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*BUOfwfdQ_AGRTTXoA1XVog.png"></p>
+<h3 id="5-连接前端与智能合约"><a href="#5-连接前端与智能合约" class="headerlink" title="5. 连接前端与智能合约"></a>5. 连接前端与智能合约</h3><p><strong>5.1 设置环境</strong></p>
+<p>在根目录下面创建一个名为<code>client</code>的新文件夹，并使用 npm 初始化。然后安装 web3.js 和 lite-server 依赖</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs bash">mkdir client<br><span class="hljs-built_in">cd</span> client<br>npm init<br>npm install web3<br>npm install lite-server --save-dev<br>npm install jquery<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://miro.medium.com/max/1400/1*8ispMi4jvWqpZcQUtWIB_g.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*8ispMi4jvWqpZcQUtWIB_g.png"></p>
+<p><img src="https://miro.medium.com/max/1530/1*HJC2wetULjjoETDeU7pQ8A.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1530/1*HJC2wetULjjoETDeU7pQ8A.png"></p>
+<p><img src="/img/1_p4RFz_rtNGwkNZNt8nbjog.png" srcset="/img/loading.gif" alt="1_p4RFz_rtNGwkNZNt8nbjog.png"></p>
+<p><img src="https://miro.medium.com/max/1532/1*lO2Zfc_pS2YDSY7bhX7lbQ.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1532/1*lO2Zfc_pS2YDSY7bhX7lbQ.png"></p>
+<p><img src="https://miro.medium.com/max/1532/1*1hFiTf2WxqFoDdtec4A8wA.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1532/1*1hFiTf2WxqFoDdtec4A8wA.png"></p>
+<p>创建一个名为<code>src</code>的文件夹并添加两个脚本：<code>index.js</code> 和 <code>utils.js</code>。你还需要在根文件夹（client 文件夹）下面创建<code>index.html</code>文件，并在其中添加如下代码。</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs html"><span class="hljs-meta">&lt;!DOCTYPE <span class="hljs-meta-keyword">html</span>&gt;</span><br><span class="hljs-tag">&lt;<span class="hljs-name">html</span> <span class="hljs-attr">lang</span>=<span class="hljs-string">&quot;en&quot;</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">head</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">charset</span>=<span class="hljs-string">&quot;UTF-8&quot;</span> /&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">meta</span> <span class="hljs-attr">name</span>=<span class="hljs-string">&quot;viewport&quot;</span> <span class="hljs-attr">content</span>=<span class="hljs-string">&quot;width=device-width, initial-scale=1.0&quot;</span> /&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">title</span>&gt;</span>Dapp Demo<span class="hljs-tag">&lt;/<span class="hljs-name">title</span>&gt;</span><br>	<span class="hljs-tag">&lt;/<span class="hljs-name">head</span>&gt;</span><br>	<span class="hljs-tag">&lt;<span class="hljs-name">body</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">h1</span>&gt;</span>Dapp Demo<span class="hljs-tag">&lt;/<span class="hljs-name">h1</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">br</span> /&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">h2</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">h2</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">form</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;form&quot;</span>&gt;</span><br>			<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">id</span>=<span class="hljs-string">&quot;input&quot;</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text&quot;</span> /&gt;</span><br>			<span class="hljs-tag">&lt;<span class="hljs-name">input</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;submit&quot;</span> <span class="hljs-attr">value</span>=<span class="hljs-string">&quot;submit&quot;</span> /&gt;</span><br>		<span class="hljs-tag">&lt;/<span class="hljs-name">form</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;node_modules/jquery/dist/jquery.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;node_modules/web3/dist/web3.min.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;src/utils.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br>		<span class="hljs-tag">&lt;<span class="hljs-name">script</span> <span class="hljs-attr">type</span>=<span class="hljs-string">&quot;text/javascript&quot;</span> <span class="hljs-attr">src</span>=<span class="hljs-string">&quot;src/index.js&quot;</span>&gt;</span><span class="hljs-tag">&lt;/<span class="hljs-name">script</span>&gt;</span><br>	<span class="hljs-tag">&lt;/<span class="hljs-name">body</span>&gt;</span><br><span class="hljs-tag">&lt;/<span class="hljs-name">html</span>&gt;</span><br></code></pre></td></tr></table></figure>
+
+<p><strong>5.2 获取 web3 实例</strong></p>
+<p>一旦将 web3.js 作为项目中的依赖。你需要做的是使用 provider 实例去实例化 web3 对象，以便于享受 web3 提供的一切。在这个例子中，我们尝试使用 RPC 服务地址与 ganache 连接</p>
+<p>打开 utils.js 文件并创建一个<code>getWeb3()</code>方法，该方法将从 ganache RPC 服务地址创建一个 web3js 实例。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs jsx"><span class="hljs-keyword">const</span> getWeb3 = <span class="hljs-function">() =&gt;</span> &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-keyword">new</span> <span class="hljs-built_in">Promise</span>(<span class="hljs-function">(<span class="hljs-params">resolve, reject</span>) =&gt;</span> &#123;<br>		<span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">&#x27;load&#x27;</span>, <span class="hljs-keyword">async</span> () =&gt; &#123;<br>			<span class="hljs-keyword">try</span> &#123;<br>				<span class="hljs-keyword">const</span> web3 = <span class="hljs-keyword">new</span> Web3(<span class="hljs-string">&#x27;http://127.0.0.1:7545&#x27;</span>);<br>				resolve(web3);<br>			&#125; <span class="hljs-keyword">catch</span> (error) &#123;<br>				reject(error);<br>			&#125;<br>		&#125;);<br>	&#125;);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>为了创建一个 contract 实例，我们需要 contract ABI 及其地址。如果你查看了 build 目录下的 artifacts。你会发现一个名为<code>Greeting.json</code>的文件。如果你打开它，你会发现很多关于合约的信息，包含合约名、ABI 等。</p>
+<p>在<code>client</code>文件夹下创建一个名为<code>contracts</code>的新文件夹，并复制粘贴<code>Greeting.json</code>文件。</p>
+<p>首先，我们使用 web3.eth.net.getId()获取 Ganache 连接到的网络 ID。然后，使用返回的 ID 从<code>Greeting.json文件</code>获取合约地址，该文件还为我们提供了合约 ABI，并使用 web3.eth.Contract 创建一个合约的实例。</p>
+<p>在 utils.js 文件中创建一个<code>getContract()</code>方法，并在其中添加如下代码。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs jsx"><span class="hljs-keyword">const</span> getContract = <span class="hljs-keyword">async</span> web3 =&gt; &#123;<br>	<span class="hljs-keyword">const</span> data = <span class="hljs-keyword">await</span> $.getJSON(<span class="hljs-string">&#x27;./contracts/Greeting.json&#x27;</span>);<br>	<span class="hljs-keyword">const</span> netId = <span class="hljs-keyword">await</span> web3.eth.net.getId();<br>	<span class="hljs-keyword">const</span> deployedNetwork = data.networks[netId];<br>	<span class="hljs-keyword">const</span> greeting = <span class="hljs-keyword">new</span> web3.eth.Contract(data.abi, deployedNetwork &amp;&amp; deployedNetwork.address);<br>	<span class="hljs-keyword">return</span> greeting;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p><strong>5.4 与智能合约交互</strong></p>
+<p>一旦我们创建了一个合约的实例，我们可以开始使用<code>myContract.methods.myMethod([arguments])</code>调用他的方法，如<a target="_blank" rel="noopener" href="https://web3js.readthedocs.io/en/v1.3.0/web3-eth-contract.html#id26">文档</a>所属。</p>
+<p>如果调用的函数是纯函数（pure）或只读函数，则需要使用:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jsx">myContract.methods.myMethod([<span class="hljs-built_in">arguments</span>]).call();<br></code></pre></td></tr></table></figure>
+
+<p>如果调用的函数需要修改状态，则需要使用:</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs jsx">myContract.methods.myMethod([<span class="hljs-built_in">arguments</span>]).send();<br></code></pre></td></tr></table></figure>
+
+<p>最后，在<code>index.j</code>s 文件中添加如下内容：</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs jsx"><span class="hljs-keyword">const</span> displayGreeting = <span class="hljs-keyword">async</span> (greeting, contract) =&gt; &#123;<br>	greeting = <span class="hljs-keyword">await</span> contract.methods.sayHello().call();<br>	$(<span class="hljs-string">&#x27;h2&#x27;</span>).html(greeting);<br>&#125;;<br><span class="hljs-keyword">const</span> updateGreeting = <span class="hljs-function">(<span class="hljs-params">greeting, contract, accounts</span>) =&gt;</span> &#123;<br>	<span class="hljs-keyword">let</span> input;<br>	$(<span class="hljs-string">&#x27;#input&#x27;</span>).on(<span class="hljs-string">&#x27;change&#x27;</span>, <span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> &#123;<br>		input = e.target.value;<br>	&#125;);<br>	$(<span class="hljs-string">&#x27;#form&#x27;</span>).on(<span class="hljs-string">&#x27;submit&#x27;</span>, <span class="hljs-keyword">async</span> e =&gt; &#123;<br>		e.preventDefault();<br>		<span class="hljs-keyword">await</span> contract.methods.updateGreeting(input).send(&#123; <span class="hljs-attr">from</span>: accounts[<span class="hljs-number">0</span>], <span class="hljs-attr">gas</span>: <span class="hljs-number">40000</span> &#125;);<br>		displayGreeting(greeting, contract);<br>	&#125;);<br>&#125;;<br><span class="hljs-keyword">async</span> <span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">greetingApp</span>(<span class="hljs-params"></span>) </span>&#123;<br>	<span class="hljs-keyword">const</span> web3 = <span class="hljs-keyword">await</span> getWeb3();<br>	<span class="hljs-keyword">const</span> accounts = <span class="hljs-keyword">await</span> web3.eth.getAccounts();<br>	<span class="hljs-keyword">const</span> contract = <span class="hljs-keyword">await</span> getContract(web3);<br>	<span class="hljs-keyword">let</span> greeting;<br>	displayGreeting(greeting, contract);<br>	updateGreeting(greeting, contract, accounts);<br>&#125;<br>greetingApp();<br></code></pre></td></tr></table></figure>
+
+<p>最终项目结构如下所示,</p>
+<p><img src="https://miro.medium.com/max/1400/1*74lrT8qdVRSwaU7hMLvX-A.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*74lrT8qdVRSwaU7hMLvX-A.png"></p>
+<p><strong>5.5 运行 app</strong></p>
+<p>开发工作已经完成。现在，我们在 package.json 文件中添加启动脚本后可以运行此项目。</p>
+<figure class="highlight jsx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs jsx"><span class="hljs-string">&quot;scripts&quot;</span>: &#123;<br>	<span class="hljs-string">&quot;test&quot;</span>: <span class="hljs-string">&quot;echo \&quot;Error: no test specified \&quot; &amp;&amp; exit 1&quot;</span>,<br>	<span class="hljs-string">&quot;start&quot;</span>: <span class="hljs-string">&quot;lite-server&quot;</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>使用下面命令运行这个项目。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">npm start<br></code></pre></td></tr></table></figure>
+
+<p><img src="https://miro.medium.com/max/1400/1*z-xi4qOQgmPvTc3kenN-Ww.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/1400/1*z-xi4qOQgmPvTc3kenN-Ww.png"></p>
+<p><img src="https://miro.medium.com/max/610/1*Fe09Ux2ukihPkn7e8824eg.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/610/1*Fe09Ux2ukihPkn7e8824eg.png"></p>
+<p><img src="https://miro.medium.com/max/608/1*eazlchwgFb1ehShst8T5HA.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/608/1*eazlchwgFb1ehShst8T5HA.png"></p>
+<p><img src="https://miro.medium.com/max/604/1*QgErQWK44r_4bOAOJtgMRQ.png" srcset="/img/loading.gif" alt="https://miro.medium.com/max/604/1*QgErQWK44r_4bOAOJtgMRQ.png"></p>
+<p>就这样， 你自己有 Web3js 的 Dapp。</p>
+<p>感谢阅读全文。</p>
+<p>如果你喜欢这篇文章，欢迎点赞打赏！</p>
+<p>完整代码在<a target="_blank" rel="noopener" href="https://github.com/codemaker2015/dapp-web3js-demo">https://github.com/codemaker2015/dapp-web3js-demo</a></p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/web3/">web3</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Dapp/">Dapp</a>
+                    
+                      <a class="hover-with-bg" href="/tags/Blockchain/">Blockchain</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/17/chrome-language-update/">
+                        <span class="hidden-mobile">Mac OS X 下修改 Google Chrome 显示语言的方法</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'chengyaojun/blog-utterances');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":200})
+    NProgress.start()
+    document.addEventListener('DOMContentLoaded', function() {
+      window.NProgress && window.NProgress.inc();
+    })
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.12.0/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

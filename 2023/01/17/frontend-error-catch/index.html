@@ -1,0 +1,642 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="chengyaojun">
+  <meta name="keywords" content="">
+  <title>搭建前端监控，如何采集异常数据？(转) - 瞌睡虫的巢穴</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.1.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"copy_btn":true,"image_zoom":{"enable":true},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>瞌睡虫</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/bg/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="搭建前端监控，如何采集异常数据？(转)">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-01-17 11:15" pubdate>
+        2023年1月17日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      4.3k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      51
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">搭建前端监控，如何采集异常数据？(转)</h1>
+            
+            <div class="markdown-body">
+              <h1 id="搭建前端监控，如何采集异常数据？"><a href="#搭建前端监控，如何采集异常数据？" class="headerlink" title="搭建前端监控，如何采集异常数据？"></a>搭建前端监控，如何采集异常数据？</h1><p><a target="_blank" rel="noopener" href="https://segmentfault.com/a/1190000041962607">https://segmentfault.com/a/1190000041962607</a></p>
+<p>前两篇，我们介绍了为什么前端应该有监控系统，以及搭建前端监控的总体步骤，前端监控的 Why 和 What 想必你已经明白了。接下来我们解决 How 如何实现的问题。</p>
+<p>如果不了解前端监控，建议先看前两篇：</p>
+<p>本篇我们介绍，前端如何采集数据，先从收集异常数据开始。</p>
+<h2 id="什么是异常数据？"><a href="#什么是异常数据？" class="headerlink" title="什么是异常数据？"></a>什么是异常数据？</h2><p>异常数据，是指前端在操作页面的过程中，触发的执行异常或加载异常，此时浏览器会抛出来报错信息。</p>
+<p>比如说你的前端代码用了个未声明的变量，此时控制台会打印出红色错误，告诉你报错原因。或者是接口请求出错了，在网络面板内也能查到异常情况，是请求发送的异常，还是接口响应的异常。</p>
+<p>在我们实际的开发场景中，前端捕获的异常主要是分两个大类，<code>接口异常</code> 和 <code>前端异常</code>，我们分别看下这两大类异常怎么捕获。</p>
+<h2 id="接口异常"><a href="#接口异常" class="headerlink" title="接口异常"></a>接口异常</h2><p>接口异常一定是在请求的时候触发。前端目前大部分的请求是用 <code>axios</code> 发起的，所以只要获取 axios 可能发生的异常即可。</p>
+<p>如果你用 Promise 的写法，则用 <code>.catch</code> 捕获：</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript">axios<br>  .post(<span class="hljs-string">&#x27;/test&#x27;</span>)<br>  .<span class="hljs-keyword">then</span>(<span class="hljs-function"><span class="hljs-params">(res)</span> =&gt;</span> &#123;<br>    <span class="hljs-built_in">console</span>.log(res);<br>  &#125;)<br>  .<span class="hljs-keyword">catch</span>(<span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span> &#123;<br>    <span class="hljs-regexp">//</span> err 就是捕获到的错误对象<br>    handleError(err);<br>  &#125;);<br></code></pre></td></tr></table></figure>
+
+<p>如果你用 async/await 的写法，则用 <code>try..catch..</code> 捕获：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">async</span> () =&gt; &#123;<br>  <span class="hljs-keyword">try</span> &#123;<br>    <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">await</span> axios.post(<span class="hljs-string">&#x27;/test&#x27;</span>);<br>    <span class="hljs-built_in">console</span>.log(res);<br>  &#125; <span class="hljs-keyword">catch</span> (err) &#123;<br>    <span class="hljs-comment">// err 就是捕获到的错误对象</span><br>    handleError(err);<br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>当捕获到异常之后，统一交给 <code>handleError</code> 函数处理，这个函数会将接收到的异常进行处理，并调用 <code>上报接口</code> 将异常数据传到服务器，从而完成采集。</p>
+<p>上面我们写的异常捕获，逻辑上是没问题的，实操起来就会发现第一道坎：<strong>页面这么多，难道每个请求都要包一层 catch 吗？</strong></p>
+<p>是啊，如果我们是新开发一个项目，在开始的时候就规定每个请求要包一层 catch 也无可厚非，但是如果是在一个已有的规模还不小的项目中接入前端监控，这时候在每个页面或每个请求 catch 显然是不现实的。</p>
+<p>所以，为了最大程度的降低接入成本，减少侵入性，我们是用第二种方案：<strong>在 axios 拦截器中捕获异常</strong>。</p>
+<p>前端项目，为了统一处理请求，比如 401 的跳转，或者全局错误提示，都会在全局写一个 axios 实例，为这个实例添加拦截器，然后在其他页面中直接倒入这个实例使用，比如：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs awk"><span class="hljs-regexp">//</span> 全局请求：src<span class="hljs-regexp">/request/</span>axios.js<br><br>const instance = axios.create(&#123;<br>  baseURL: <span class="hljs-string">&#x27;https://api.test.com&#x27;</span><br>  timeout: <span class="hljs-number">15000</span>,<br>  headers: &#123;<br>    <span class="hljs-string">&#x27;Content-Type&#x27;</span>: <span class="hljs-string">&#x27;application/json&#x27;</span>,<br>  &#125;,<br>&#125;)<br><br>export default instance<br></code></pre></td></tr></table></figure>
+
+<p>然后在具体的页面中这样发起请求：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// a 页面：src/page/a.jsx</span><br><span class="hljs-keyword">import</span> http <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/src/request/axios.js&#x27;</span>;<br><br><span class="hljs-keyword">async</span> () =&gt; &#123;<br>  <span class="hljs-keyword">let</span> res = <span class="hljs-keyword">await</span> http.post(<span class="hljs-string">&#x27;/test&#x27;</span>);<br>  <span class="hljs-built_in">console</span>.log(res);<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<p>这样的话，我们发现每个页面的请求都会走全局 axios 实例，所以我们只需要在全局请求的位置捕获异常即可，就不需要在每个页面捕获了，这样接入成本会大大降低。</p>
+<p>按照这个方案，结下来我们在 <code>src/request/axios.js</code> 这个文件中动手实施。</p>
+<h3 id="拦截器中捕获异常"><a href="#拦截器中捕获异常" class="headerlink" title="拦截器中捕获异常"></a>拦截器中捕获异常</h3><p>首先我们为 axios 添加响应拦截器：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// 响应拦截器</span><br>instance.interceptors.response.use(<br>  (response) =&gt; &#123;<br>    <span class="hljs-keyword">return</span> response.data;<br>  &#125;,<br>  (error) =&gt; &#123;<br>    <span class="hljs-comment">// 发生异常会走到这里</span><br>    <span class="hljs-keyword">if</span> (error.response) &#123;<br>      <span class="hljs-keyword">let</span> response = error.response;<br>      <span class="hljs-keyword">if</span> (response.status &gt;= <span class="hljs-number">400</span>) &#123;<br>        handleError(response);<br>      &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      handleError(<span class="hljs-literal">null</span>);<br>    &#125;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">Promise</span>.reject(error);<br>  &#125;,<br>);<br></code></pre></td></tr></table></figure>
+
+<p>响应拦截器的第二个参数是在发生错误时执行的函数，参数就是异常。我们首先要判断是否存在 <code>error.response</code>，存在就说明接口有响应，也就是接口通了，但是返回错误；不存在则说明接口没通，请求一直挂起，多数是接口崩溃了。</p>
+<p>如果有响应，首先获取状态码，根据状态码来判断什么时候需要收集异常。上面的判断方式简单粗暴，只要状态码大于 400 就视为一个异常，拿到响应数据，并执行上报逻辑。</p>
+<p>如果没有响应，可以看作是接口超时异常，调用异常处理函数时传一个 <code>null</code> 即可。</p>
+<h2 id="前端异常"><a href="#前端异常" class="headerlink" title="前端异常"></a>前端异常</h2><p>上面我们介绍了在 axios 拦截器中如何捕获接口异常，这部分我们再介绍如何捕获前端异常。</p>
+<p>前端代码捕获异常，最常用的方式就是用 try..catch.. 了，任意同步代码块都可以放到 <code>try</code> 块中，只要发生异常就会执行 catch：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">try</span> &#123;<br>  <span class="hljs-comment">// 任意同步代码</span><br>&#125; <span class="hljs-keyword">catch</span> (err) &#123;<br>  <span class="hljs-built_in">console</span>.log(err);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上面说“任意同步代码”而不是“任意代码”，主要是普通的 Promise 写法 try..catch.. 是捕获不到的，只能用 <code>.catch()</code> 捕获，如：</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript"><span class="hljs-keyword">try</span> &#123;<br>  <span class="hljs-built_in">Promise</span>.reject(<span class="hljs-keyword">new</span> <span class="hljs-built_in">Error</span>(<span class="hljs-string">&#x27;出错了&#x27;</span>)).<span class="hljs-keyword">catch</span>(<span class="hljs-function"><span class="hljs-params">(err)</span> =&gt;</span> <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;1：&#x27;</span>, err));<br>&#125; <span class="hljs-keyword">catch</span> (err) &#123;<br>  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;2：&#x27;</span>, err);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>把这段代码丢进浏览器，打印结果是：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs basic"><span class="hljs-number">1</span>： <span class="hljs-keyword">Error</span>: 出错了<br></code></pre></td></tr></table></figure>
+
+<p>很明显只是 .catch 捕获到了异常。不过与上面接口异常的逻辑一样，这种方式处理当前页面异常没什么问题，但从整个应用来看，这样捕获异常侵入性强，接入成本高，所以我们的思路依然是全局捕获。</p>
+<p>全局捕获 js 的异常也比较简单，用 <code>window.addEventLinstener(&#39;error&#39;)</code> 即可：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-comment">// js 错误捕获</span><br><span class="hljs-built_in">window</span>.addEventListener(<span class="hljs-string">&#x27;error&#x27;</span>, <span class="hljs-function">(<span class="hljs-params">error</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">// error 就是js的异常</span><br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<h3 id="为啥不用-window-onerror-？"><a href="#为啥不用-window-onerror-？" class="headerlink" title="为啥不用 window.onerror ？"></a>为啥不用 window.onerror ？</h3><p>这里很多小伙伴有疑问，为什么不用 <code>window.onerror</code> 全局监听呢？<code>window.addEventLinstener(&#39;error&#39;)</code> 和 <code>window.onerror</code> 有什么区别呢？</p>
+<p>首先这两个函数功能基本一致，都可以全局捕获 js 异常。但是有一类异常叫做 <code>资源加载异常</code>，就是在代码中引用了不存在的图片，js，css 等静态资源导致的异常，比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">const</span> loadCss = <span class="hljs-function">()=&gt;</span> &#123;<br>  <span class="hljs-keyword">let</span> link = <span class="hljs-built_in">document</span>.createElement(<span class="hljs-string">&#x27;link&#x27;</span>)<br>  link.type = <span class="hljs-string">&#x27;text/css&#x27;</span><br>  link.rel = <span class="hljs-string">&#x27;stylesheet&#x27;</span><br>  link.href = <span class="hljs-string">&#x27;https://baidu.com/15.css&#x27;</span><br>  <span class="hljs-built_in">document</span>.getElementsByTagName(<span class="hljs-string">&#x27;head&#x27;</span>)[<span class="hljs-number">10</span>].append(link)<br>&#125;<br><span class="hljs-function"><span class="hljs-title">render</span>(<span class="hljs-params"></span>)</span> &#123;<br>  <span class="hljs-keyword">return</span> &lt;div&gt;<br>    &lt;img src=<span class="hljs-string">&#x27;./bbb.png&#x27;</span>/&gt;<br>    &lt;button onClick=&#123;loadCss&#125;&gt;加载样式&lt;button/&gt;<br>  &lt;/div&gt;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上述代码中的 <code>baidu.com/15.css</code> 和 <code>bbb.png</code> 是不存在的，JS 执行到这里肯定会报一个资源找不到的错误。但是默认情况下，上面两种 window 对象上的全局监听函数都监听不到这类异常。</p>
+<p>因为资源加载的异常只会在当前元素触发，异常不会冒泡到 window，因此监听 window 上的异常是捕捉不到的。那怎么办呢？</p>
+<p>如果你熟悉 DOM 事件你就会明白，既然冒泡阶段监听不到，那么在捕获阶段一定能监听到。</p>
+<p>方法就是给 <code>window.addEventListene</code> 函数指定第三个参数，很简单就是 <code>true</code>，表示该监听函数会在捕获阶段执行，这样就能监听到资源加载异常了。</p>
+<figure class="highlight aspectj"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs aspectj"><span class="hljs-comment">// 捕获阶段全局监听</span><br>window.addEventListene(<br>  <span class="hljs-string">&#x27;error&#x27;</span>,<br>  (<span class="hljs-keyword">error</span>) =&gt; &#123;<br>    <span class="hljs-keyword">if</span> (<span class="hljs-keyword">error</span>.<span class="hljs-keyword">target</span> != window) &#123;<br>      console.log(<span class="hljs-keyword">error</span>.<span class="hljs-keyword">target</span>.tagName, <span class="hljs-keyword">error</span>.<span class="hljs-keyword">target</span>.src);<br>    &#125;<br>    handleError(<span class="hljs-keyword">error</span>);<br>  &#125;,<br>  <span class="hljs-keyword">true</span>,<br>);<br></code></pre></td></tr></table></figure>
+
+<p>上述方式可以很轻松的监听到图片加载异常，这就是为什么更推荐 <code>window.addEventListene</code> 的原因。不过要记得，第三个参数设为 <code>true</code>，监听事件捕获，就可以全局捕获到 JS 异常和资源加载异常。</p>
+<p>需要特别注意，<code>window.addEventListene</code> 同样不能捕获 Promise 异常。不管是 <code>Promise.then()</code> 写法还是 <code>async/await</code> 写法，发生异常时都不能捕获。</p>
+<p>因此，我们还需要全局监听一个 <code>unhandledrejection</code> 函数来捕获未处理的 Promise 异常。</p>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs mel"><span class="hljs-comment">// promise 错误捕获</span><br><span class="hljs-keyword">window</span>.addEventListener(<span class="hljs-string">&#x27;unhandledrejection&#x27;</span>, (<span class="hljs-keyword">error</span>) =&gt; &#123;<br>  <span class="hljs-comment">// 打印异常原因</span><br>  console.<span class="hljs-keyword">log</span>(<span class="hljs-keyword">error</span>.reason);<br>  handleError(<span class="hljs-keyword">error</span>);<br>  <span class="hljs-comment">// 阻止控制台打印</span><br>  <span class="hljs-keyword">error</span>.preventDefault();<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p><code>unhandledrejection</code> 事件会在 Promise 发生异常并且没有指定 <code>catch</code> 的时候触发，相当于一个全局的 Promise 异常兜底方案。这个函数会捕捉到运行时意外发生的 Promise 异常，这对我们排错非常有用。</p>
+<p>默认情况下，Promise 发生异常且未被 catch 时，会在控制台打印异常。如果我们想阻止异常打印，可以用上面的 <code>error.preventDefault()</code> 方法。</p>
+<h2 id="异常处理函数"><a href="#异常处理函数" class="headerlink" title="异常处理函数"></a>异常处理函数</h2><p>前面我们在捕获到异常时调用了一个异常处理函数 <code>handleError</code>，所有的异常和上报逻辑统一在这个函数内处理，接下来我们实现这个函数。</p>
+<figure class="highlight fsharp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs fsharp">const handleError = (error: any, <span class="hljs-class"><span class="hljs-keyword">type</span>: 1 | 2) &#123;</span><br>  <span class="hljs-keyword">if</span>(<span class="hljs-class"><span class="hljs-keyword">type</span> </span>== <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-comment">// 处理接口异常</span><br>  &#125;<br>  <span class="hljs-keyword">if</span>(<span class="hljs-class"><span class="hljs-keyword">type</span> </span>== <span class="hljs-number">2</span>) &#123;<br>    <span class="hljs-comment">// 处理前端异常</span><br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>为了区分异常类型，函数新加了第二个参数 type 表示当前异常属于前端还是接口。在不同的场景中使用如下：</p>
+<ul>
+<li>处理前端异常：<code>handleError(error, 1)</code></li>
+<li>处理接口异常：<code>handleError(error, 2)</code></li>
+</ul>
+<h3 id="处理接口异常"><a href="#处理接口异常" class="headerlink" title="处理接口异常"></a>处理接口异常</h3><p>处理接口异常，我们需要将拿到的 error 参数解析，然后取到需要的数据。接口异常一般需要的数据字段如下：</p>
+<ul>
+<li><code>code</code>：http 状态码</li>
+<li><code>url</code>：接口请求地址</li>
+<li><code>method</code>：接口请求方法</li>
+<li><code>params</code>：接口请求参数</li>
+<li><code>error</code>：接口报错信息</li>
+</ul>
+<p>这些字段都可以在 error 参数中获取，方法如下：</p>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs lasso">const handleError = (error: any, <span class="hljs-keyword">type</span>: <span class="hljs-number">1</span> | <span class="hljs-number">2</span>) &#123;<br>  <span class="hljs-keyword">if</span>(<span class="hljs-keyword">type</span> == <span class="hljs-number">1</span>) &#123;<br>    <span class="hljs-comment">// 此时的 error 响应，它的 config 字段中包含请求信息</span><br>    <span class="hljs-keyword">let</span> &#123; url, method, <span class="hljs-keyword">params</span>, <span class="hljs-built_in">data</span> &#125; = error.config<br>    <span class="hljs-keyword">let</span> err_data = &#123;<br>       url, method,<br>       <span class="hljs-keyword">params</span>: &#123; query: <span class="hljs-keyword">params</span>, body: <span class="hljs-built_in">data</span> &#125;,<br>       error: error.<span class="hljs-built_in">data</span>?.message || JSON.stringify(error.<span class="hljs-built_in">data</span>),<br>    &#125;)<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>config 对象中的 <code>params</code> 表示 GET 请求的 query 参数，<code>data</code> 表示 POST 请求的 body 参数，所以我在处理参数的时候，将这两个参数合并为一个，用一个属性 params 来表示。</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs css"><span class="hljs-selector-tag">params</span>: &#123; <span class="hljs-attribute">query</span>: params, body: data &#125;<br></code></pre></td></tr></table></figure>
+
+<p>还有一个 <code>error</code> 属性表示错误信息，这个获取方式要根据你的接口返回格式来拿。要避免获取到接口可能返回的超长错误信息，多半是接口没处理，这样可能会导致写入数据失败，要提前与后台规定好。</p>
+<h3 id="处理前端异常"><a href="#处理前端异常" class="headerlink" title="处理前端异常"></a>处理前端异常</h3><p>前端异常异常大多数就是 js 异常，异常对应到 js 的 <code>Error</code> 对象，在处理之前，我们先看 Error 有哪几种类型：</p>
+<ul>
+<li><code>ReferenceError</code>：引用错误</li>
+<li><code>RangeError</code>：超出有效范围</li>
+<li><code>TypeError</code>：类型错误</li>
+<li><code>URIError</code>：URI 解析错误</li>
+</ul>
+<p>这几类异常的引用对象都是 <code>Error</code>，因此可以这样获取：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs gauss">const handleError = (<span class="hljs-built_in">error</span>: any, <span class="hljs-built_in">type</span>: <span class="hljs-number">1</span> | <span class="hljs-number">2</span>) &#123;<br>  <span class="hljs-keyword">if</span>(<span class="hljs-built_in">type</span> == <span class="hljs-number">2</span>) &#123;<br>    <span class="hljs-keyword">let</span> err_data = <span class="hljs-built_in">null</span><br>    <span class="hljs-comment">// 监测 error 是否是标准类型</span><br>    <span class="hljs-keyword">if</span>(<span class="hljs-built_in">error</span> instanceof <span class="hljs-built_in">Error</span>) &#123;<br>      <span class="hljs-keyword">let</span> &#123; name, message &#125; = <span class="hljs-built_in">error</span><br>      err_data = &#123;<br>        <span class="hljs-built_in">type</span>: name,<br>        <span class="hljs-built_in">error</span>: message<br>      &#125;<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>      err_data = &#123;<br>        <span class="hljs-built_in">type</span>: &#x27;other&#x27;,<br>        <span class="hljs-built_in">error</span>: JSON.strigify(<span class="hljs-built_in">error</span>)<br>      &#125;<br>    &#125;<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>上述判断中，首先判断异常是否是 <code>Error</code> 的实例。事实上绝大部分的代码异常都是标准的 JS Error，但我们这里还是判断一下，如果是的话直接获取异常类型和异常信息，不是的话将异常类型设置为 <code>other</code> 即可。</p>
+<p>我们随便写一个异常代码，看一下捕获的结果：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-function"><span class="hljs-keyword">function</span> <span class="hljs-title">test</span>(<span class="hljs-params"></span>) </span>&#123;<br>  <span class="hljs-built_in">console</span>.aaa(<span class="hljs-string">&#x27;ccc&#x27;</span>);<br>&#125;<br>test();<br></code></pre></td></tr></table></figure>
+
+<p>然后捕获到的异常是这样的：</p>
+<figure class="highlight typescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs typescript"><span class="hljs-keyword">const</span> handleError = <span class="hljs-function">(<span class="hljs-params">error: <span class="hljs-built_in">any</span></span>) =&gt;</span> &#123;<br>  <span class="hljs-keyword">if</span> (error <span class="hljs-keyword">instanceof</span> <span class="hljs-built_in">Error</span>) &#123;<br>    <span class="hljs-keyword">let</span> &#123; name, message &#125; = error;<br>    <span class="hljs-built_in">console</span>.log(name, message);<br>    <span class="hljs-comment">// 打印结果：TypeError console.aaa is not a function</span><br>  &#125;<br>&#125;;<br></code></pre></td></tr></table></figure>
+
+<h2 id="获取环境数据"><a href="#获取环境数据" class="headerlink" title="获取环境数据"></a>获取环境数据</h2><p>获取环境数据的意思是，不管是接口异常还是前端异常，除了异常本身的数据之外，我们还需要一些其他信息来帮助我们更快更准的定位到哪里出错了。</p>
+<p>这类数据我们称之为 “环境数据”，就是触发异常时所在的环境。比如是谁在哪个页面的哪个地方触发的错误，有了这些，我们就能马上找到错误来源，再根据异常信息解决错误。</p>
+<p>环境数据至少包括下面这些：</p>
+<ul>
+<li><code>app</code>：应用的名称/标识</li>
+<li><code>env</code>：应用环境，一般是开发，测试，生产</li>
+<li><code>version</code>：应用的版本号</li>
+<li><code>user_id</code>：触发异常的用户 ID</li>
+<li><code>user_name</code>：触发异常的用户名</li>
+<li><code>page_route</code>：异常的页面路由</li>
+<li><code>page_title</code>：异常的页面名称</li>
+</ul>
+<p><code>app</code> 和 <code>version</code> 都是应用配置，可以判断异常出现在哪个应用的哪个版本。这两个字段我建议直接获取 <code>package.json</code> 下的 <code>name</code> 和 <code>version</code> 属性，在应用升级的时候，及时修改 version 版本号即可。</p>
+<p>其余的字段，需要根据框架的配置获取，下面我分别介绍在 Vue 和 React 中如何获取。</p>
+<h3 id="在-Vue-中"><a href="#在-Vue-中" class="headerlink" title="在 Vue 中"></a>在 Vue 中</h3><p>在 Vue 中获取用户信息一般都是直接从 Vuex 里面拿，如果你的用户信息没有存到 Vuex 里，从 localStorage 里获取也是一样的。</p>
+<p>如果在 Vuex 里，可以这样实现：</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs clean"><span class="hljs-keyword">import</span> store <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/store&#x27;</span>; <span class="hljs-comment">// vuex 导出目录</span><br><span class="hljs-keyword">let</span> user_info = store.state;<br><span class="hljs-keyword">let</span> user_id = user_info.id;<br><span class="hljs-keyword">let</span> user_name = user_info.name;<br></code></pre></td></tr></table></figure>
+
+<p>用户信息存在状态管理中，页面路由信息一般是在 <code>vue-router</code> 中定义。前端的路由地址可以直接从 vue-router 中获取，页面名称可以配置在 <code>meta</code> 中，如：</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript">&#123;<br>  path: <span class="hljs-string">&#x27;/test&#x27;</span>,<br>  name: <span class="hljs-string">&#x27;test&#x27;</span>,<br>  meta: &#123;<br>    title: <span class="hljs-string">&#x27;测试页面&#x27;</span><br>  &#125;,<br>  component: <span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> <span class="hljs-keyword">import</span>(<span class="hljs-string">&#x27;@/views/test/Index.vue&#x27;</span>)<br>&#125;,<br></code></pre></td></tr></table></figure>
+
+<p>这样配置之后，获取当前页面路由和页面名称就简单了：</p>
+<figure class="highlight nim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs nim">window.vm = new <span class="hljs-type">Vue</span>(<span class="hljs-meta">&#123;...&#125;</span>)<br><br><span class="hljs-keyword">let</span> route = vm.$route<br><span class="hljs-keyword">let</span> page_route = route.path<br><span class="hljs-keyword">let</span> page_title = route.meta.title<br></code></pre></td></tr></table></figure>
+
+<p>最后一步，我们再获取当前环境。当前环境用一个环境变量 <code>VUE_APP_ENV</code> 表示，有三个值：</p>
+<ul>
+<li><code>dev</code>：开发环境</li>
+<li><code>test</code>：测试环境</li>
+<li><code>pro</code>：生产环境</li>
+</ul>
+<p>然后在根目录下新建三个环境文件，写入环境变量：</p>
+<ul>
+<li><code>.env.development</code>：VUE_APP_ENV=dev</li>
+<li><code>.env.staging</code>：VUE_APP_ENV=test</li>
+<li><code>.env.production</code>：VUE_APP_ENV=pro</li>
+</ul>
+<p>现在获取 <code>env</code> 环境时就可以这么获取：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css">&#123;<br>  <span class="hljs-attribute">env</span>: process.env.VUE_APP_ENV;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>最后一步，执行打包时，传入模式以匹配对应的环境文件：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs applescript"><span class="hljs-comment"># 测试环境打包</span><br>$ num <span class="hljs-built_in">run</span> build <span class="hljs-comment">--mode staging</span><br><span class="hljs-comment"># 生产环境打包</span><br>$ num <span class="hljs-built_in">run</span> build <span class="hljs-comment">--mode production</span><br></code></pre></td></tr></table></figure>
+
+<p>获取到环境数据，再拼上异常数据，我们就准备好了数据等待上报了。</p>
+<h3 id="在-React-中"><a href="#在-React-中" class="headerlink" title="在 React 中"></a>在 React 中</h3><p>和 Vue 一样，用户信息可以直接从状态管理里拿。因为 React 中没有全局获取当前旅游的快捷方式，所以页面信息我也会放在状态管理里面。我用的状态管理是 Mobx，获取方式如下：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs awk">import &#123; TestStore &#125; from <span class="hljs-string">&#x27;@/stores&#x27;</span>; <span class="hljs-regexp">//</span> mobx 导出目录<br>let &#123; user_info, cur_path, cur_page_title &#125; = TestStore;<br><span class="hljs-regexp">//</span> 用户信息：user_info<br><span class="hljs-regexp">//</span> 页面信息：cur_path，cur_page_title<br></code></pre></td></tr></table></figure>
+
+<p>这样的话，就需要在每次切换页面时，更新 mobx 里的路由信息，怎么做呢？</p>
+<p>其实在根路由页（一般是首页）的 <code>useEffect</code> 中监听即可：</p>
+<figure class="highlight coffeescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs coffeescript"><span class="hljs-keyword">import</span> &#123; useLocation &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;react-router&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; observer, useLocalObservable &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;mobx-react&#x27;</span>;<br><span class="hljs-keyword">import</span> &#123; TestStore &#125; <span class="hljs-keyword">from</span> <span class="hljs-string">&#x27;@/stores&#x27;</span>;<br><br><span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> observer(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;<br>  const &#123; pathname, search &#125; = useLocation();<br>  const test_inst = useLocalObservable(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> TestStore);<br>  useEffect(<span class="hljs-function"><span class="hljs-params">()</span> =&gt;</span> &#123;<br>    test_inst.setCurPath(pathname, search);<br>  &#125;, [pathname]);<br>&#125;);<br></code></pre></td></tr></table></figure>
+
+<p>获取到用户信息和页面信息，接下来就是当前环境了。和 Vue 一样通过 <code>--mode</code> 来指定模式，并加载相应的环境变量，只不过设置方法略有不同。大多数的 React 项目可能都是用 <code>create-react-app</code> 创建的，我们以此为例介绍怎么修改。</p>
+<p>首先，打开 <code>scripts/start.js</code> 文件，这是执行 npm run start 时执行的文件，我们在开头部分第 6 行加代码：</p>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs ini"><span class="hljs-attr">process.env.REACT_APP_ENV</span> = <span class="hljs-string">&#x27;dev&#x27;</span><span class="hljs-comment">;</span><br></code></pre></td></tr></table></figure>
+
+<p>没错，我们指定的环境变量就是 <code>REACT_APP_ENV</code>，因为只有 <code>REACT_</code> 开头的环境变量可被读取。</p>
+<p>然后再修改 <code>scripts/build.js</code> 文件的第 48 行，修改后如下：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">if</span> (argv.length &gt;= <span class="hljs-number">2</span> &amp;&amp; argv[<span class="hljs-number">0</span>] == <span class="hljs-string">&#x27;--mode&#x27;</span>) &#123;<br>  <span class="hljs-keyword">switch</span> (argv[<span class="hljs-number">1</span>]) &#123;<br>    <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;staging&#x27;</span>:<br>      process.env.REACT_APP_ENV = <span class="hljs-string">&#x27;test&#x27;</span>;<br>      <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">case</span> <span class="hljs-string">&#x27;production&#x27;</span>:<br>      process.env.REACT_APP_ENV = <span class="hljs-string">&#x27;pro&#x27;</span>;<br>      <span class="hljs-keyword">break</span>;<br>    <span class="hljs-keyword">default</span>:<br>  &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>此时获取 <code>env</code> 环境时就可以这么获取：</p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs css">&#123;<br>  <span class="hljs-attribute">env</span>: process.env.REACT_APP_ENV;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>经过前面一系列操作，我们已经比较全面的获取到了异常数据，以及发生异常时到环境数据，接下来就是调用上报接口，将这些数据传给后台存起来，我们以后查找和追踪就很方便了。</p>
+<p>如果你也需要前端监控，不妨花上半个小时，按照文中介绍的方法收集一下异常数据，相信对你很有帮助。</p>
+<p>文章首发公众号 <a target="_blank" rel="noopener" href="https://link.segmentfault.com/?enc=bfuiXamZT3K+uApy11Tlzw==.SGM5hP8Cp0ls5CLII189MyrA7Hbq7dlGUnc0iZrRjieiLhCoTdqM/u20r9KSZand">程序员成功</a>。这个公众号只做原创，专注于前端工程与架构的分享，关注我查看更多硬核知识。我还有一个前端工程与架构群，如果有兴趣，可加我 <a target="_blank" rel="noopener" href="https://link.segmentfault.com/?enc=6Bvgk5wZYKWqPt0hD2oLiQ==.WjX6L7lrLamnI+jD+1fgjLzn8chDv6RD9+/FDpQ23a6920l46uE3xBAFZdb1Iq53">微信</a> 入群。</p>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/web/">web</a>
+                    
+                      <a class="hover-with-bg" href="/tags/vue/">vue</a>
+                    
+                      <a class="hover-with-bg" href="/tags/javascript/">javascript</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/17/chrome-language-update/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Mac OS X 下修改 Google Chrome 显示语言的方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/17/html-tips/">
+                        <span class="hidden-mobile">HTML Tips (转)</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'chengyaojun/blog-utterances');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":200})
+    NProgress.start()
+    document.addEventListener('DOMContentLoaded', function() {
+      window.NProgress && window.NProgress.inc();
+    })
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.12.0/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=&#34;auto&#34;>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/favicon.png">
+  <link rel="icon" type="image/png" href="/img/favicon.png">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="description" content="">
+  <meta name="author" content="chengyaojun">
+  <meta name="keywords" content="">
+  <title>CORS详解（转） - 瞌睡虫的巢穴</title>
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/css/bootstrap.min.css" />
+
+
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/github-markdown-css/4.0.0/github-markdown.min.css" />
+  <link  rel="stylesheet" href="/lib/hint/hint.min.css" />
+
+  
+    
+    
+      
+      <link  rel="stylesheet" href="https://cdn.staticfile.org/highlight.js/10.1.2/styles/github-gist.min.css" />
+    
+  
+
+  
+    <link  rel="stylesheet" href="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.css" />
+  
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_ba1fz6golrf.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_kmeydafke9r.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+<!-- 自定义样式保持在最底部 -->
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    var CONFIG = {"hostname":"example.com","root":"/","version":"1.8.6","typing":{"enable":true,"typeSpeed":70,"cursorChar":"|","loop":false},"toc":{"enable":true,"headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"right","visible":"hover","icon":""},"copy_btn":true,"image_zoom":{"enable":true},"lazyload":{"enable":true,"onlypost":false},"web_analytics":{"enable":false,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null}}};
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+
+<body>
+  <header style="height: 70vh;">
+    <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand"
+       href="/">&nbsp;<strong>瞌睡虫</strong>&nbsp;</a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" data-toggle="modal" data-target="#modalSearch">&nbsp;<i
+                class="iconfont icon-search"></i>&nbsp;</a>
+          </li>
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" href="javascript:">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+    <div class="banner intro-2" id="background" parallax=true
+         style="background: url('/img/bg/default.jpg') no-repeat center center;
+           background-size: cover;">
+      <div class="full-bg-img">
+        <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+          <div class="page-header text-center fade-in-up">
+            <span class="h2" id="subtitle" title="CORS详解（转）">
+              
+            </span>
+
+            
+              <div class="mt-3">
+  
+  
+    <span class="post-meta">
+      <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+      <time datetime="2023-01-17 11:10" pubdate>
+        2023年1月17日 上午
+      </time>
+    </span>
+  
+</div>
+
+<div class="mt-1">
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-chart"></i>
+      1.9k 字
+    </span>
+  
+
+  
+    
+    <span class="post-meta mr-2">
+      <i class="iconfont icon-clock-fill"></i>
+      
+      
+      25
+       分钟
+    </span>
+  
+
+  
+  
+</div>
+
+            
+          </div>
+
+          
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid">
+  <div class="row">
+    <div class="d-none d-lg-block col-lg-2"></div>
+    <div class="col-lg-8 nopadding-md">
+      <div class="container nopadding-md" id="board-ctn">
+        <div class="py-5" id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">CORS详解（转）</h1>
+            
+            <div class="markdown-body">
+              <h1 id="CORS-详解"><a href="#CORS-详解" class="headerlink" title="CORS 详解"></a>CORS 详解</h1><h2 id="0、关于-CORS（转）"><a href="#0、关于-CORS（转）" class="headerlink" title="0、关于 CORS（转）"></a>0、关于 CORS（转）</h2><p>说到 CORS，就不得不先了解跨站 HTTP 请求（Cross-site HTTP request）。</p>
+<p>跨域 HTTP 请求是指发起请求的资源所在域不同于该请求所指向资源所在的域的 HTTP 请求。</p>
+<p>正如大家所知，出于安全考虑，浏览器会限制脚本中发起的跨站请求。使用 XMLHttpRequest 发起 HTTP 请求必须遵守同源策略。 具体而言，Web 应用程序能且只能使用 XMLHttpRequest 对象向其加载的源域名发起 HTTP 请求，而不能向任何其它域名发起请求。</p>
+<p>由于 Web 应用技术越来越丰富，我们非常渴望在不丢失安全的前提下，能够实现跨站请求。特别是现在的 Web 程序结构，一般是 HTML+REST API。在之前的实现中，我们一般采用 jsonp 来发起跨站请求，这其实是利用了 html 标签的特点。</p>
+<p>W3C 的 Web 应用工作组推荐了一种新的机制，即跨域资源共享（Cross-Origin Resource Sharing），也就是当前我们提到的 CORS。</p>
+<p>CORS 的核心，就是让服务器来确定是否允许跨域访问。</p>
+<h2 id="1、典型场景"><a href="#1、典型场景" class="headerlink" title="1、典型场景"></a>1、典型场景</h2><h3 id="1-1、简单请求"><a href="#1-1、简单请求" class="headerlink" title="1.1、简单请求"></a>1.1、简单请求</h3><p>什么是简单请求？全部满足以下条件的请求可以称之为简单请求：</p>
+<ol>
+<li>只使用 GET、HEAD 或者 POST 请求方法。如果是 POST，则数据类型（Content-Type）只能是<code>application/x-www-form-urlencodeed</code>、<code>multipart/form-data</code>、<code>text/plain</code>中的一种。</li>
+<li>没有使用自定义的请求头（如 x-token）</li>
+</ol>
+<p>按照这个规则，那我们的能实现跨域请求的情况如下：</p>
+<p>Server 代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-meta">&#x27;use strict&#x27;</span>;<br><br><span class="hljs-keyword">var</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;http&#x27;</span>);<br><span class="hljs-keyword">var</span> server = http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">//之后设置了Access-Control-Allow-Origin，才会允许跨域</span><br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Origin&#x27;</span>, <span class="hljs-string">&#x27;*&#x27;</span>);<br>  res.write(<span class="hljs-string">&#x27;abc&#x27;</span>);<br>  res.end();<br>&#125;);<br><br>server.listen(<span class="hljs-number">10000</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;started.&#x27;</span>);<br>&#125;);<br><br></code></pre></td></tr></table></figure>
+
+<p>Client 代码：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">var xhr = <span class="hljs-built_in">new</span> XMLHttpRequest();<br>xhr.onreadystatechange = <span class="hljs-keyword">function</span>()&#123;<br>  <span class="hljs-keyword">if</span>(xhr.readyState === XMLHttpRequest.DONE)&#123;<br>    console.log(<span class="hljs-string">&#x27;Result：&#x27;</span>, xhr.responseText);<br>  &#125;<br>&#125;<br><br>//场景一：<span class="hljs-keyword">GET</span>请求，不需要<span class="hljs-keyword">Header</span>，允许跨域<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;GET&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.send();<br><br>//场景二： POST请求，需要设置为指定<span class="hljs-keyword">Header</span>（不设置content-<span class="hljs-keyword">type</span>也可），允许跨域<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;POST&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>//此处<span class="hljs-keyword">value</span>必须是<span class="hljs-type">text</span>/plain或者application/x-www-form-urlencoded或者multipart/form-data。<br>//此处也可以不设置<br>xhr.setRequestHeader(<span class="hljs-string">&#x27;Content-Type&#x27;</span>, <span class="hljs-string">&#x27;text/plain&#x27;</span>);<br>xhr.send();<br><br>//场景三：<span class="hljs-keyword">DELETE</span>请求（不允许跨域）<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;DELETE&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.send();<br><br>//场景四：POST请求，有自定义<span class="hljs-keyword">Header</span>（不允许跨域）<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;POST&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.setRequestHeader(<span class="hljs-string">&#x27;x-token&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>);<br>xhr.send();<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="1-2、预请求"><a href="#1-2、预请求" class="headerlink" title="1.2、预请求"></a>1.2、预请求</h3><p>不同于简单请求，预请求要求必须先发送一个 OPTIONS 请求给站点，来查明该站点是否允许跨域请求，这样做的原因是为了避免跨站请求可能对目的站点的数据造成的损坏。</p>
+<p>如果请求满足以下任一条件，则会产生预请求：</p>
+<ol>
+<li>请求以 GET、HEAD、POST 之外的方法发起。或者，使用 POST，但数据类型为<code>application/x-www-form-urlencoded</code>, <code>multipart/form-data</code> 或者 <code>text/plain</code> 以外的数据类型。（注：之前的版本只有 text/plain 可以不用发起预请求）。</li>
+<li>使用了自定义请求头。</li>
+</ol>
+<p>按照如上规则，我们来列举几个应用场景：</p>
+<p>Server 端代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-meta">&#x27;use strict&#x27;</span>;<br><br><span class="hljs-keyword">var</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;http&#x27;</span>);<br><span class="hljs-keyword">var</span> server = http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">//之后设置了Access-Control-Allow-Origin，才会允许跨域</span><br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Origin&#x27;</span>, <span class="hljs-string">&#x27;*&#x27;</span>);<br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Methods&#x27;</span>, <span class="hljs-string">&#x27;POST, DELETE, GET&#x27;</span>);<br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Headers&#x27;</span>, <span class="hljs-string">&#x27;x-token&#x27;</span>);<br>  <span class="hljs-comment">//设置预请求缓存1天，1天内再次请求，可以跳过预请求</span><br>  <span class="hljs-comment">//此功能需要客户端缓存支持，如果客户端禁用缓存，那么每次都会预请求</span><br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Max-Age&#x27;</span>, <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">24</span>);<br>  res.write(<span class="hljs-string">&#x27;abc&#x27;</span>);<br>  res.end();<br>&#125;);<br><br>server.listen(<span class="hljs-number">10000</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;started.&#x27;</span>);<br>&#125;);<br><br></code></pre></td></tr></table></figure>
+
+<p>Client 端代码：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs pgsql">var xhr = <span class="hljs-built_in">new</span> XMLHttpRequest();<br>xhr.onreadystatechange = <span class="hljs-keyword">function</span>()&#123;<br>  <span class="hljs-keyword">if</span>(xhr.readyState === XMLHttpRequest.DONE)&#123;<br>    console.log(<span class="hljs-string">&#x27;Result：&#x27;</span>, xhr.responseText);<br>  &#125;<br>&#125;<br><br>//场景一：<span class="hljs-keyword">DELETE</span>请求，发送<span class="hljs-keyword">OPTIONS</span>，匹配，允许跨域<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;DELETE&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.send();<br><br>//场景二：PUT请求，发送<span class="hljs-keyword">OPTIONS</span>，不匹配，不允许跨域<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;PUT&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.send();<br><br>//场景三：<span class="hljs-keyword">DELETE</span>请求匹配，使用自定义<span class="hljs-keyword">Header</span>不匹配，不允许跨域<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;DELETE&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.setRequestHeader(<span class="hljs-string">&#x27;x-token1&#x27;</span>, <span class="hljs-string">&#x27;aa&#x27;</span>);<br>xhr.send();<br><br>//场景四：POST请求，匹配的自定义<span class="hljs-keyword">Header</span>，允许跨域<br>xhr.<span class="hljs-keyword">open</span>(<span class="hljs-string">&#x27;POST&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-keyword">true</span>);<br>xhr.setRequestHeader(<span class="hljs-string">&#x27;x-token&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>);<br>xhr.send();<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="1-3、带凭证的请求"><a href="#1-3、带凭证的请求" class="headerlink" title="1.3、带凭证的请求"></a>1.3、带凭证的请求</h3><p>一般来说，对于跨站请求，浏览器是不会发送凭证（HTTP Cookies 和验证信息）的。如果要发送带凭证的信息，只需要给 XMLHttpRequest 设置一个特殊的属性<code>withCredentials = true</code>，通过这种方式，浏览器就允许发送凭证信息。</p>
+<p>带凭证的请求可能是简单请求，也可以是会有预请求。是否允许跨域，会先判断简单请求和预请求的规则，然后还会带上带凭证的请求自己的规则。</p>
+<p>在带凭证的请求中，后端的响应必须包含 Header<code>Access-Control-Allow-Credentials=true</code>，同时 Header <code>Access-Control-Allow-Origin</code>，不能再使用*号这种匹配符。</p>
+<p>具体示例如下：</p>
+<p>服务端代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-meta">&#x27;use strict&#x27;</span>;<br><br><span class="hljs-keyword">var</span> http = <span class="hljs-built_in">require</span>(<span class="hljs-string">&#x27;http&#x27;</span>);<br><span class="hljs-keyword">var</span> server = http.createServer(<span class="hljs-function">(<span class="hljs-params">req, res</span>) =&gt;</span> &#123;<br>  <span class="hljs-comment">//要处理带凭证的请求，此Header不能使用*。</span><br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Origin&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://10.16.85.170:8000&gt;&#x27;</span>);<br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Methods&#x27;</span>, <span class="hljs-string">&#x27;POST, DELETE, GET&#x27;</span>);<br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Headers&#x27;</span>, <span class="hljs-string">&#x27;x-token&#x27;</span>);<br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Max-Age&#x27;</span>, <span class="hljs-number">60</span> * <span class="hljs-number">60</span> * <span class="hljs-number">24</span>);<br>  <span class="hljs-comment">//只有设置了该Header，才允许带凭证的请求。</span><br>  res.setHeader(<span class="hljs-string">&#x27;Access-Control-Allow-Credentials&#x27;</span>, <span class="hljs-literal">true</span>);<br>  res.write(<span class="hljs-string">&#x27;abc&#x27;</span>);<br>  res.end();<br>&#125;);<br><br>server.listen(<span class="hljs-number">10000</span>, <span class="hljs-function">() =&gt;</span> &#123;<br>  <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;started.&#x27;</span>);<br>&#125;);<br><br></code></pre></td></tr></table></figure>
+
+<p>客户端代码：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs javascript"><span class="hljs-keyword">var</span> xhr = <span class="hljs-keyword">new</span> XMLHttpRequest();<br>xhr.onreadystatechange = <span class="hljs-function"><span class="hljs-keyword">function</span>(<span class="hljs-params"></span>)</span>&#123;<br>  <span class="hljs-keyword">if</span>(xhr.readyState === XMLHttpRequest.DONE)&#123;<br>    <span class="hljs-built_in">console</span>.log(<span class="hljs-string">&#x27;Result：&#x27;</span>, xhr.responseText);<br>  &#125;<br>&#125;<br><span class="hljs-comment">//优先满足预请求，然后满足凭证请求，允许跨域。</span><br>xhr.open(<span class="hljs-string">&#x27;POST&#x27;</span>, <span class="hljs-string">&#x27;&lt;http://localhost:10000/&gt;&#x27;</span>, <span class="hljs-literal">true</span>);<br>xhr.withCredentials = <span class="hljs-literal">true</span>;<br>xhr.setRequestHeader(<span class="hljs-string">&#x27;x-token&#x27;</span>, <span class="hljs-string">&#x27;a&#x27;</span>);<br>xhr.send();<br><br></code></pre></td></tr></table></figure>
+
+<h2 id="2、HTTP-响应头"><a href="#2、HTTP-响应头" class="headerlink" title="2、HTTP 响应头"></a>2、HTTP 响应头</h2><h3 id="2-1、-后端-HTTP-响应头"><a href="#2-1、-后端-HTTP-响应头" class="headerlink" title="2.1、 后端 HTTP 响应头"></a>2.1、 后端 HTTP 响应头</h3><p>此处列举后端有关 CORS 的响应头：</p>
+<ol>
+<li>Access-Control-Allow-Origin： <origin> | _ 允许的域名，只能有一个值。比如“_”或“<a target="_blank" rel="noopener" href="http://abc.com/">abc.com</a>”，”<a target="_blank" rel="noopener" href="http://a.com/">a.com</a>,<a target="_blank" rel="noopener" href="http://b.com/">b.com</a>“这种不允许</li>
+<li>Access-Control-Expose-Headers: <headers> 允许的白名单 Header，多个用逗号隔开</li>
+<li>Access-Control-Max-Age: <delta-seconds> 预请求缓存时间，单位秒，<strong>禁用缓存</strong>时无效哦！</li>
+<li>Access-Control-Allow-Credentials: true | false 是否允许带凭证的请求，如果为 true，则 Origin 只能是具体的值</li>
+<li>Access-Control-Allow-Methods: <methods> 允许的请求类型，多个用逗号隔开</li>
+<li>Access-Control-Allow-Headers: <headers> 在实际请求中，允许的自定义 header，多个用逗号隔开</li>
+</ol>
+<h3 id="2-2、-浏览器发出跨域请求的响应头"><a href="#2-2、-浏览器发出跨域请求的响应头" class="headerlink" title="2.2、 浏览器发出跨域请求的响应头"></a>2.2、 浏览器发出跨域请求的响应头</h3><p>此处列举出浏览器在发送跨域请求时，会带上的响应头：</p>
+<ol>
+<li>Origin: <origin> 告诉服务器，请求来自哪里，仅仅是服务器名，不包含路径。</li>
+<li>Access-Control-Request-Method: <method> 预请求时，告诉服务器实际的请求方式</li>
+<li>Access-Control-Request-Headers: <headers> 预请求时，告诉服务器，实际请求所携带的自定义 Header</li>
+</ol>
+<h2 id="3、参考资料"><a href="#3、参考资料" class="headerlink" title="3、参考资料"></a>3、参考资料</h2><ol>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS#Preflighted_requests">MDN HTTP access control (CORS)</a></li>
+<li><a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/docs/Web/HTTP/Access_control_CORS">MDN HTTP 访问控制(CORS)</a></li>
+</ol>
+
+            </div>
+            <hr>
+            <div>
+              <div class="post-metas mb-3">
+                
+                
+                  <div class="post-meta">
+                    <i class="iconfont icon-tags"></i>
+                    
+                      <a class="hover-with-bg" href="/tags/HTTP/">HTTP</a>
+                    
+                  </div>
+                
+              </div>
+              
+                <p class="note note-warning">本博客所有文章除特别声明外，均采用 <a target="_blank" href="https://creativecommons.org/licenses/by-sa/4.0/deed.zh" rel="nofollow noopener noopener">CC BY-SA 4.0 协议</a> ，转载请注明出处！</p>
+              
+              
+                <div class="post-prevnext row">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2023/01/17/html-tips/">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">HTML Tips (转)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/01/17/appstore-usa-alipay/">
+                        <span class="hidden-mobile">支付宝给美国App Store充值</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+              <!-- Comments -->
+              <article class="comments" id="comments">
+                
+                
+  <script type="text/javascript">
+    Fluid.utils.waitElementVisible('comments', function() {
+      var light = 'github-light';
+      var dark = 'github-dark';
+      var schema = document.documentElement.getAttribute('data-user-color-scheme');
+      if (schema === 'dark') {
+        schema = dark;
+      } else {
+        schema = light;
+      }
+      window.UtterancesThemeLight = light;
+      window.UtterancesThemeDark = dark;
+      var s = document.createElement('script');
+      s.setAttribute('src', 'https://utteranc.es/client.js');
+      s.setAttribute('repo', 'chengyaojun/blog-utterances');
+      s.setAttribute('issue-term', 'pathname');
+      
+      s.setAttribute('theme', schema);
+      s.setAttribute('crossorigin', 'anonymous');
+      document.getElementById('comments').appendChild(s);
+    })
+  </script>
+  <noscript>Please enable JavaScript to view the comments</noscript>
+
+
+              </article>
+            
+          </article>
+        </div>
+      </div>
+    </div>
+    
+      <div class="d-none d-lg-block col-lg-2 toc-container" id="toc-ctn">
+        <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+      </div>
+    
+  </div>
+</div>
+
+<!-- Custom -->
+
+
+    
+
+    
+      <a id="scroll-top-button" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v"
+                 for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+
+    
+  </main>
+
+  <footer class="text-center mt-5 py-3">
+  <div class="footer-content">
+     <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/fluid-dev/hexo-theme-fluid" target="_blank" rel="nofollow noopener"><span>Fluid</span></a> 
+  </div>
+  
+
+  
+
+  
+</footer>
+
+<!-- SCRIPTS -->
+
+  <script  src="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://cdn.staticfile.org/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":200})
+    NProgress.start()
+    document.addEventListener('DOMContentLoaded', function() {
+      window.NProgress && window.NProgress.inc();
+    })
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://cdn.staticfile.org/jquery/3.5.1/jquery.min.js" ></script>
+<script  src="https://cdn.staticfile.org/twitter-bootstrap/4.5.3/js/bootstrap.min.js" ></script>
+<script  src="/js/debouncer.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+<!-- Plugins -->
+
+
+  
+    <script  src="/js/lazyload.js" ></script>
+  
+
+
+
+  
+
+
+
+  <script  src="https://cdn.staticfile.org/tocbot/4.12.0/tocbot.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/fancybox/3.5.7/jquery.fancybox.min.js" ></script>
+
+
+
+  <script  src="https://cdn.staticfile.org/anchor-js/4.3.0/anchor.min.js" ></script>
+
+
+
+  <script defer src="https://cdn.staticfile.org/clipboard.js/2.0.6/clipboard.min.js" ></script>
+
+
+
+
+
+
+  <script  src="https://cdn.staticfile.org/typed.js/2.0.11/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var title = document.getElementById('subtitle').title;
+      
+      typing(title)
+      
+    })(window, document);
+  </script>
+
+
+
+  <script  src="/js/local-search.js" ></script>
+  <script>
+    (function () {
+      var path = "/local-search.xml";
+      var inputArea = document.querySelector("#local-search-input");
+      inputArea.onclick = function () {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+        this.onclick = null
+      }
+    })()
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<!-- 主题的启动项 保持在最底部 -->
+<script  src="/js/boot.js" ></script>
+
+
+
+</body>
+</html>
