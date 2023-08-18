@@ -4,6 +4,33 @@
   
   
   <entry>
+    <title>TronWeb、SolanaWeb包Import报错</title>
+    <link href="/2023/08/18/tronweb-solaneweb-import-error/"/>
+    <url>/2023/08/18/tronweb-solaneweb-import-error/</url>
+    
+    <content type="html"><![CDATA[<h3 id="描述"><a href="#描述" class="headerlink" title="描述"></a>描述</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs shell">error  in ./node_modules/@noble/curves/abstract/weierstrass.js<br><br>Module parse failed: Unexpected token (1094:55)<br>File was processed with these loaders:<br> * ./node_modules/cache-loader/dist/cjs.js<br> * ./node_modules/babel-loader/lib/index.js<br>You may need an additional loader to handle the result of these loaders.<br>|     var u1 = modN(h * is); // u1 = hs^-1 mod n<br>|     var u2 = modN(r * is); // u2 = rs^-1 mod n<br><span class="hljs-meta">&gt;</span><span class="bash">     var R = Point.BASE.multiplyAndAddUnsafe(P, u1, u2)?.toAffine(); // R = u1⋅G + u2⋅P</span><br>|     if (!R) return false;<br>|     var v = modN(R.x);<br><br> @ ./node_modules/@noble/curves/secp256k1.js 14:23-59<br> @ ./node_modules/tronweb/node_modules/ethereum-cryptography/secp256k1.js<br> @ ./node_modules/tronweb/dist/TronWeb.node.js<br> @ ./node_modules/cache-loader/dist/cjs.js??ref--12-0!./node_modules/babel-loader/lib!./node_modules/cache-loader/dist/cjs.js??ref--0-0!./node_modules/vue-loader/lib??vue-loader-options!./src/components/index.vue?vue&amp;type=script&amp;lang=js&amp;<br> @ ./src/components/index.vue?vue&amp;type=script&amp;lang=js&amp;<br> @ ./src/components/index.vue<br> @ ./src/router/index.js<br> @ ./src/main.js<br> @ multi (webpack)-dev-server/client?http://10.1.60.19:8080/sockjs-node (webpack)/hot/dev-server.js ./src/main.js<br></code></pre></td></tr></table></figure><h3 id="版本"><a href="#版本" class="headerlink" title="版本"></a>版本</h3><ul><li><code>&quot;tronweb&quot;: &quot;^5.3.0&quot;</code></li><li><code>&quot;@solana/web 3. Js&quot;: &quot;^1.78.4&quot;</code></li><li><code>&quot;core-js&quot;: &quot;^2.6.5&quot;</code></li><li><code>&quot;vue&quot;: &quot;^2.6.10&quot;</code></li><li><code>&quot;@vue/cli-plugin-babel&quot;: &quot;^3.8.0&quot;</code></li><li><code>&quot;@vue/cli-service&quot;: &quot;^3.8.0&quot;</code></li><li><code>&quot;vue-template-compiler&quot;: &quot;^2.6.10&quot;</code></li></ul><h3 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h3><ul><li>升级 <code>core-js</code> 版本为3.32.0</li><li>升级@vue/cli-plugin-babel、 @vue/cli-service 版本为 4.4.0</li><li><code>vue.config.js</code> 添加配置项transpileDependencies</li></ul><figure class="highlight groovy"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs groovy"><span class="hljs-attr">transpileDependencies:</span> [<br>    <span class="hljs-string">&#x27;@noble&#x27;</span>,<br>  ],<br></code></pre></td></tr></table></figure>]]></content>
+    
+    
+    <categories>
+      
+      <category>经验总结</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>TronWeb、Solana</tag>
+      
+      <tag>Vue</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
     <title>使用Web3.j开发你的第一个Dapp</title>
     <link href="/2023/01/17/web3-dapp/"/>
     <url>/2023/01/17/web3-dapp/</url>
